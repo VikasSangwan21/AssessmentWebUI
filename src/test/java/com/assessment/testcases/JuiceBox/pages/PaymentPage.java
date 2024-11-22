@@ -1,5 +1,6 @@
 package com.assessment.testcases.JuiceBox.pages;
 
+import com.assessment.constants.FrameworkConstants;
 import com.assessment.testcases.JuiceBox.BasePageJB;
 import com.assessment.utils.DataGenerateUtils;
 
@@ -16,10 +17,11 @@ public class PaymentPage extends BasePageJB {
     private By expiryMonthDD  = By.xpath("(//select)[1]");
     private By expiryYearDD  = By.xpath("(//select)[2]");
     private By submitButton   = By.id("submitButton");
-    private By selectCard  = By.id("mat-radio-46");
+    private By selectCard  = By.xpath("//mat-radio-button");
     
     private By proceedToReviewButton  = By.cssSelector("[aria-label='Proceed to review']");
     private By completePurchaseButton  = By.cssSelector("[aria-label='Complete your purchase']");
+    private String cardNumber = "4323546576784566";
 
 
 
@@ -27,14 +29,16 @@ public class PaymentPage extends BasePageJB {
     public void addNewCard() {
         clickElement(addNewCardSection);
         sleep(3);
-        setTextUsingJS(nameTextbox, DataGenerateUtils.randomFullName());
-        setTextUsingJS(cardNumberTextbox, "1234123412341234");
         selectOptionByIndex(expiryMonthDD, 3);
         selectOptionByIndex(expiryYearDD, 3);
-        //clickElementWithJs(nameTextbox);
-        clickElementWithJs(submitButton);
-
-        sleep(600);
+        clearText(cardNumberTextbox);
+        clickElement(cardNumberTextbox);
+        setText(cardNumberTextbox, cardNumber);
+        clearText(nameTextbox);
+        clickElement(nameTextbox);
+        setText(nameTextbox, DataGenerateUtils.randomFirstName());
+        sleep(2); //for test stability
+        clickElement(submitButton);
 
     }
 

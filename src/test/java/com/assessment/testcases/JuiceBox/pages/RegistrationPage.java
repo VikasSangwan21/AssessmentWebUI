@@ -46,8 +46,9 @@ public class RegistrationPage extends BasePageJB {
         clickElement(emailTextBox);
         clickElement(securityQuestionDD);
         sleep(2);  // for test stability
+        clickElementWithJs(passwordTextBox);
         clickElement(passwordTextBox);
-        sleep(2);  // for test stability
+        sleep(3);  // for test stability
         clickElement(repeatPasswordTextBox);
         clickElement(securityAnswerTextBox);
         clickElement(userRegistrationHeader);

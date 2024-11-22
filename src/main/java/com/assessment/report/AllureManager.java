@@ -10,10 +10,8 @@ import com.assessment.utils.BrowserInfoUtils;
 import com.assessment.utils.LogUtils;
 import com.github.automatedowl.tools.AllureEnvironmentWriter;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
-import io.qameta.allure.Extension;
 import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;

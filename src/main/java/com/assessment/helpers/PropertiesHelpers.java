@@ -1,5 +1,3 @@
-
-
 package com.assessment.helpers;
 
 import java.io.FileInputStream;

@@ -17,15 +17,11 @@ import com.assessment.utils.LogUtils;
 import com.aventstack.extentreports.Status;
 import com.github.automatedowl.tools.AllureEnvironmentWriter;
 import com.google.common.collect.ImmutableMap;
-import io.qameta.allure.Allure;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.testng.*;
 
 import static com.assessment.constants.FrameworkConstants.*;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class TestListener implements ITestListener, ISuiteListener, IInvokedMethodListener {

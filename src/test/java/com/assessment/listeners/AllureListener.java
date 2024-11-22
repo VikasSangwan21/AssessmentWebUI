@@ -8,7 +8,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import com.assessment.driver.DriverManager;
-import com.assessment.report.AllureManager;
 
 import static com.assessment.constants.FrameworkConstants.*;
 

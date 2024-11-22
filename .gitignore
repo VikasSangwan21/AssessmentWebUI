@@ -3,12 +3,9 @@ out/
 .idea/
 .allure/
 allure-results/
-ExportData/
-ExtentReports/
 logs/
 target/
 test-output/
-reports/
 *.mp4
 *.avi
 allure-report/

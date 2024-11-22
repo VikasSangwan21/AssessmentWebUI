@@ -4,7 +4,6 @@ import com.assessment.driver.DriverManager;
 import com.assessment.driver.TargetFactory;
 import com.assessment.helpers.PropertiesHelpers;
 import com.assessment.keywords.WebUI;
-import com.assessment.listeners.AllureListener;
 import com.assessment.listeners.TestListener;
 import com.assessment.testcases.JuiceBox.BasePageJB;
 

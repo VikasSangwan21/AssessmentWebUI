@@ -34,6 +34,7 @@ public class HomePage extends BasePageJB {
 
     public void openJBHomePageScrollToBottom() {
         openWebsite(FrameworkConstants.URL_JUICEBOX);
+        clickElement(welcomeMsgDismissButton);
         scrollToPageBottom();
     }
 

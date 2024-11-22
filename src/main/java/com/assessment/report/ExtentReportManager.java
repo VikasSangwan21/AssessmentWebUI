@@ -3,7 +3,6 @@ package com.assessment.report;
 import com.assessment.constants.FrameworkConstants;
 import com.assessment.driver.DriverManager;
 import com.assessment.enums.CategoryType;
-import com.assessment.helpers.CaptureHelpers;
 import com.assessment.utils.*;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.MediaEntityBuilder;
@@ -13,10 +12,8 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-//import tech.grasshopper.reporter.ExtentPDFReporter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 public class ExtentReportManager {

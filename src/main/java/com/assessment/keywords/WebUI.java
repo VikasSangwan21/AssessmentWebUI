@@ -1,5 +1,3 @@
-
-
 package com.assessment.keywords;
 
 import io.qameta.allure.Step;
@@ -160,50 +158,6 @@ public class WebUI {
     }
 
     /**
-     * Count files in Download Directory
-     *
-     * @return files total in download directory
-     */
-    public static int countFilesInDownloadDirectory() {
-        String pathFolderDownload = getPathDownloadDirectory();
-        File file = new File(pathFolderDownload);
-        int i = 0;
-        for (File listOfFiles : file.listFiles()) {
-            if (listOfFiles.isFile()) {
-                i++;
-            }
-        }
-        return i;
-    }
-
-    /**
-     * Verify files in the Download Directory contain the specified file (CONTAIN)
-     *
-     * @param fileName the specified file
-     * @return true if file is contain in download directory, else is false
-     */
-    public static boolean verifyFileContainsInDownloadDirectory(String fileName) {
-        boolean flag = false;
-        try {
-            String pathFolderDownload = getPathDownloadDirectory();
-            File dir = new File(pathFolderDownload);
-            File[] files = dir.listFiles();
-            if (files == null || files.length == 0) {
-                flag = false;
-            }
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().contains(fileName)) {
-                    flag = true;
-                }
-            }
-            return flag;
-        } catch (Exception e) {
-            e.getMessage();
-            return flag;
-        }
-    }
-
-    /**
      * Verify files in the Download Directory contain the specified file (EQUALS)
      *
      * @param fileName the specified file
@@ -229,225 +183,7 @@ public class WebUI {
             return flag;
         }
     }
-
-    /**
-     * Verify the file is downloaded (CONTAIN)
-     *
-     * @param fileName       the specified file
-     * @param timeoutSeconds System will wait at most timeout (seconds) to return result
-     * @return true if file is downloaded, else is false
-     */
-    public static boolean verifyDownloadFileContainsName(String fileName, int timeoutSeconds) {
-        int i = 0;
-        while (i < timeoutSeconds) {
-            boolean exist = verifyFileContainsInDownloadDirectory(fileName);
-            if (exist) {
-                i = timeoutSeconds;
-                return true;
-            }
-            sleep(1);
-            i++;
-        }
-        return false;
-    }
-
-    /**
-     * Verify the file is downloaded (EQUALS)
-     *
-     * @param fileName       the specified file
-     * @param timeoutSeconds System will wait at most timeout (seconds) to return result
-     * @return true if file is downloaded, else is false
-     */
-    public static boolean verifyDownloadFileEqualsName(String fileName, int timeoutSeconds) {
-        int i = 0;
-        while (i < timeoutSeconds) {
-            boolean exist = verifyFileEqualsInDownloadDirectory(fileName);
-            if (exist) {
-                i = timeoutSeconds;
-                return true;
-            }
-            sleep(1);
-            i++;
-        }
-        return false;
-    }
-
-    /**
-     * Delete all files in Download Directory
-     */
-    public static void deleteAllFileInDownloadDirectory() {
-        try {
-            String pathFolderDownload = getPathDownloadDirectory();
-            File file = new File(pathFolderDownload);
-            File[] listOfFiles = file.listFiles();
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    new File(listOfFiles[i].toString()).delete();
-                }
-            }
-        } catch (Exception e) {
-            LogUtils.error(e.getMessage());
-        }
-    }
-
-    /**
-     * Delete all files in Download Directory
-     *
-     * @param pathDirectory the Download Directory path
-     */
-    public static void deleteAllFileInDirectory(String pathDirectory) {
-        try {
-            File file = new File(pathDirectory);
-            File[] listOfFiles = file.listFiles();
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    new File(listOfFiles[i].toString()).delete();
-                }
-            }
-        } catch (Exception e) {
-            LogUtils.error(e.getMessage());
-        }
-    }
-
-    /**
-     * Verify the file is downloaded with JavascriptExecutor (EQUALS)
-     *
-     * @param fileName the specified file
-     * @return true if file is downloaded, else is false
-     */
-    @Step("Verify File Downloaded With JS [Equals]: {0}")
-    public static boolean verifyFileDownloadedWithJS_Equals(String fileName) {
-        openWebsite("chrome://downloads");
-        sleep(3);
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        String element = (String) js.executeScript("return document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot.querySelector('#show').getAttribute('title')");
-        File file = new File(element);
-        LogUtils.info(element);
-        LogUtils.info(file.getName());
-        if (file.exists() && file.getName().trim().equals(fileName)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Verify the file is downloaded with JavascriptExecutor (CONTAINS)
-     *
-     * @param fileName the specified file
-     * @return true if file is downloaded, else is false
-     */
-    @Step("Verify File Downloaded With JS [Contains]: {0}")
-    public static boolean verifyFileDownloadedWithJS_Contains(String fileName) {
-        openWebsite("chrome://downloads");
-        sleep(3);
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        String element = (String) js.executeScript("return document.querySelector('downloads-manager').shadowRoot.querySelector('#downloadsList downloads-item').shadowRoot.querySelector('#show').getAttribute('title')");
-        File file = new File(element);
-        LogUtils.info(element);
-        LogUtils.info(file.getName());
-        if (file.exists() && file.getName().trim().contains(fileName)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Login as Authentication on URL
-     *
-     * @param url
-     * @param username
-     * @param password
-     */
-    @Step("Get to URL {0} with authentication")
-    public static void getToUrlAuthentication(String url, String username, String password) {
-        // Get the devtools from the running drivers and create a session
-        DevTools devTools = ((HasDevTools) DriverManager.getDriver()).getDevTools();
-        devTools.createSession();
-
-        // Enable the Network domain of devtools
-        devTools.send(Network.enable(Optional.of(100000), Optional.of(100000), Optional.of(100000)));
-        String auth = username + ":" + password;
-
-        // Encoding the username and password using Base64 (java.util)
-        String encodeToString = Base64.getEncoder().encodeToString(auth.getBytes());
-
-        // Pass the network header -> Authorization : Basic <encoded String>
-        Map<String, Object> headers = new HashMap<>();
-        headers.put("Authorization", "Basic " + encodeToString);
-        devTools.send(Network.setExtraHTTPHeaders(new Headers(headers)));
-
-        LogUtils.info("getToUrlAuthentication with URL: " + url);
-        LogUtils.info("getToUrlAuthentication with Username: " + username);
-        LogUtils.info("getToUrlAuthentication with Password: " + password);
-        // Load the application url
-        openWebsite(url);
-        sleep(3);
-    }
-
-    //Handle HTML5 validation message and valid value
-
-    /**
-     * Verify HTML5 message of element required field
-     *
-     * @param by is an element of type By
-     * @return true/false corresponds to required
-     */
-    @Step("Verify HTML5 message of element {0} required field")
-    public static boolean verifyHTML5RequiredField(By by) {
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        boolean verifyRequired = (Boolean) js.executeScript("return arguments[0].required;", getWebElement(by));
-        return verifyRequired;
-    }
-
-    /**
-     * Verify the HTML5 message of the element has a value of Valid
-     *
-     * @param by is an element of type By
-     * @return true/false corresponds to Valid
-     */
-    @Step("Verify HTML5 message of element {0} valid")
-    public static boolean verifyHTML5ValidValueField(By by) {
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        boolean verifyValid = (Boolean) js.executeScript("return arguments[0].validity.valid;", getWebElement(by));
-        return verifyValid;
-    }
-
-    /**
-     * Get HTML5 message of element
-     *
-     * @param by is an element of type By
-     * @return the Text string value of the notification (String)
-     */
-    @Step("Get HTML5 message of element {0}")
-    public static String getHTML5MessageField(By by) {
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        String message = (String) js.executeScript("return arguments[0].validationMessage;", getWebElement(by));
-        return message;
-    }
-
-    /**
-     * Set window sizes.
-     *
-     * @param widthPixel  is Width with Pixel
-     * @param heightPixel is Height with Pixel
-     */
-    public static void setWindowSize(int widthPixel, int heightPixel) {
-        DriverManager.getDriver().manage().window().setSize(new Dimension(widthPixel, heightPixel));
-    }
-
-    /**
-     * Move the window to the selected position X, Y from the top left corner 0
-     *
-     * @param X (int) - horizontal
-     * @param Y (int) - vertical
-     */
-    public static void setWindowPosition(int X, int Y) {
-        DriverManager.getDriver().manage().window().setPosition(new Point(X, Y));
-    }
-
-    /**
+      /**
      * Maximize window
      */
     public static void maximizeWindow() {
@@ -474,22 +210,6 @@ public class WebUI {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Print the current page in the browser.
-     * Note: Only works in headless mode
-     *
-     * @param endPage is the total number of pages to print. Adjective 1.
-     * @return is content of page form PDF file
-     */
-    public static String printPage(int endPage) {
-        PrintOptions printOptions = new PrintOptions();
-        //From page 1 to end page
-        printOptions.setPageRanges("1-" + endPage);
-
-        Pdf pdf = ((PrintsPage) DriverManager.getDriver()).print(printOptions);
-        return pdf.getContent();
     }
 
     /**
@@ -542,159 +262,6 @@ public class WebUI {
         } catch (InterruptedException e) {
             LogUtils.error(e.getMessage());
         }
-    }
-
-    /**
-     * Allow browser popup notifications on the website
-     *
-     * @return the value set Allow - belongs to the ChromeOptions object
-     */
-    @Step("Allow Notifications")
-    public static ChromeOptions notificationsAllow() {
-        // Create a Map to store options
-        Map<String, Object> prefs = new HashMap<String, Object>();
-
-        // Add keys and values to Map as follows to disable browser notifications
-        // Pass argument 1 to ALLOW and 2 to BLOCK
-        prefs.put("profile.default_content_setting_values.notifications", 1);
-
-        // Create a ChromeOptions session
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
-        // Use the setExperimentalOption function to execute the value through the above prefs object
-        options.setExperimentalOption("prefs", prefs);
-
-        //Returns the set value of the ChromeOptions object
-        return options;
-    }
-
-    /**
-     * Block browser popup notifications on the website
-     *
-     * @return the value of the setup Block - belongs to the ChromeOptions object
-     */
-    @Step("Blocked Notifications")
-    public static ChromeOptions notificationsBlock() {
-        // Create a Map to store options
-        Map<String, Object> prefs = new HashMap<String, Object>();
-
-        // Add keys and values to Map as follows to disable browser notifications
-        // Pass argument 1 to ALLOW and 2 to BLOCK
-        prefs.put("profile.default_content_setting_values.notifications", 2);
-
-        // Create a ChromeOptions session
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
-        // Use the setExperimentalOption function to execute the value through the above prefs object
-        options.setExperimentalOption("prefs", prefs);
-
-        //Returns the set value of the ChromeOptions object
-        return options;
-    }
-
-    /**
-     * Uploading files with a click shows a form to select local files on your computer
-     *
-     * @param by       is an element of type By
-     * @param filePath the absolute path to the file on your computer
-     */
-    @Step("Upload File with open Local Form")
-    public static void uploadFileWithLocalForm(By by, String filePath) {
-        smartWait();
-
-        Actions action = new Actions(DriverManager.getDriver());
-        //Click to open form upload
-        action.moveToElement(getWebElement(by)).click().perform();
-        sleep(2);
-
-        // Create Robot class
-        Robot robot = null;
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            LogUtils.error(e.getMessage());
-        }
-
-        // Copy File path to Clipboard
-        StringSelection str = new StringSelection(filePath);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(str, null);
-
-        //Check OS for Windows
-        if (BrowserInfoUtils.isWindows()) {
-            // Press Control+V to paste
-            robot.keyPress(KeyEvent.VK_CONTROL);
-            robot.keyPress(KeyEvent.VK_V);
-
-            // Release the Control V
-            robot.keyRelease(KeyEvent.VK_CONTROL);
-            robot.keyRelease(KeyEvent.VK_V);
-            robot.delay(1000);
-            // Press Enter
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-        }
-        //Check OS for MAC
-        if (BrowserInfoUtils.isMac()) {
-            robot.keyPress(KeyEvent.VK_META);
-            robot.keyPress(KeyEvent.VK_TAB);
-            robot.keyRelease(KeyEvent.VK_META);
-            robot.keyRelease(KeyEvent.VK_TAB);
-            robot.delay(1000);
-
-            //Open goto MAC
-            robot.keyPress(KeyEvent.VK_META);
-            robot.keyPress(KeyEvent.VK_SHIFT);
-            robot.keyPress(KeyEvent.VK_G);
-            robot.keyRelease(KeyEvent.VK_META);
-            robot.keyRelease(KeyEvent.VK_SHIFT);
-            robot.keyRelease(KeyEvent.VK_G);
-
-            //Paste the clipboard value
-            robot.keyPress(KeyEvent.VK_META);
-            robot.keyPress(KeyEvent.VK_V);
-            robot.keyRelease(KeyEvent.VK_META);
-            robot.keyRelease(KeyEvent.VK_V);
-            robot.delay(1000);
-
-            //Press Enter key to close the Goto MAC and Upload on MAC
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-        }
-
-        LogUtils.info("Upload File with Local Form: " + filePath);
-        if (ExtentTestManager.getExtentTest() != null) {
-            ExtentReportManager.info("Upload File with Local Form: " + filePath);
-        }
-        AllureManager.saveTextLog("Upload File with Local Form: " + filePath);
-
-    }
-
-    /**
-     * Upload files by dragging the link directly into the input box
-     *
-     * @param by       passes an element of object type By
-     * @param filePath absolute path to the file
-     */
-    @Step("Upload File with SendKeys")
-    public static void uploadFileWithSendKeys(By by, String filePath) {
-        smartWait();
-
-        waitForElementVisible(by).sendKeys(filePath);
-
-        LogUtils.info("Upload File with SendKeys");
-        if (ExtentTestManager.getExtentTest() != null) {
-            ExtentReportManager.info("Upload File with SendKeys");
-        }
-        AllureManager.saveTextLog("Upload File with SendKeys");
-
     }
 
     /**
@@ -2196,7 +1763,7 @@ public class WebUI {
     @Step("Verify Contains: {0} AND {1}")
     public static boolean verifyNotEquals(String actual, String expected, String message) {
         boolean result = actual.equals(expected);
-        if (result) {
+        if (!result) {
             LogUtils.info("Verify Contains: " + actual + " CONTAINS " + expected);
             if (ExtentTestManager.getExtentTest() != null) {
                 ExtentReportManager.pass("Verify Contains: " + actual + " CONTAINS " + expected);
@@ -3152,9 +2719,11 @@ public class WebUI {
      */
     public static WebElement waitForElementPresent(By by) {
         try {
+            sleep(1); //for test stability
             WebDriverWait wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(FrameworkConstants.WAIT_EXPLICIT));
             return wait.until(ExpectedConditions.presenceOfElementLocated(by));
         } catch (Throwable error) {
+            sleep(5);
             LogUtils.error("❌ Element not exist. (waitForElementPresent) " + by.toString());
             Assert.fail("❌ Element not exist. (waitForElementPresent) " + by.toString());
         }
@@ -3308,67 +2877,6 @@ public class WebUI {
                 Assert.fail("Timeout waiting for page load. (" + FrameworkConstants.WAIT_PAGE_LOADED + "s)");
             }
         }
-    }
-
-    /**
-     * Wait for JQuery to finish loading with default time from config
-     */
-    public static void waitForJQueryLoad() {
-        WebDriverWait wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(FrameworkConstants.WAIT_PAGE_LOADED), Duration.ofMillis(500));
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-
-        //Wait for jQuery to load
-        ExpectedCondition<Boolean> jQueryLoad = driver -> {
-            assert driver != null;
-            return ((Long) ((JavascriptExecutor) driver).executeScript("return jQuery.active") == 0);
-        };
-
-        //Get JQuery is Ready
-        boolean jqueryReady = (Boolean) js.executeScript("return jQuery.active==0");
-
-        //Wait JQuery until it is Ready!
-        if (!jqueryReady) {
-            LogUtils.info("JQuery is NOT Ready!");
-            try {
-                //Wait for jQuery to load
-                wait.until(jQueryLoad);
-            } catch (Throwable error) {
-                LogUtils.error("Timeout waiting for JQuery load. (" + FrameworkConstants.WAIT_PAGE_LOADED + "s)");
-                Assert.fail("Timeout waiting for JQuery load. (" + FrameworkConstants.WAIT_PAGE_LOADED + "s)");
-            }
-        }
-    }
-
-    /**
-     * Wait for Angular to finish loading with default time from config
-     */
-    public static void waitForAngularLoad() {
-        WebDriverWait wait = new WebDriverWait(DriverManager.getDriver(), Duration.ofSeconds(FrameworkConstants.WAIT_PAGE_LOADED), Duration.ofMillis(500));
-        JavascriptExecutor js = (JavascriptExecutor) DriverManager.getDriver();
-        final String angularReadyScript = "return angular.element(document).injector().get('$http').pendingRequests.length === 0";
-
-        //Wait for ANGULAR to load
-        ExpectedCondition<Boolean> angularLoad = driver -> {
-            assert driver != null;
-            return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(angularReadyScript).toString());
-        };
-
-        //Get Angular is Ready
-        boolean angularReady = Boolean.parseBoolean(js.executeScript(angularReadyScript).toString());
-
-        //Wait ANGULAR until it is Ready!
-        if (!angularReady) {
-            LogUtils.warn("Angular is NOT Ready!");
-            //Wait for Angular to load
-            try {
-                //Wait for jQuery to load
-                wait.until(angularLoad);
-            } catch (Throwable error) {
-                LogUtils.error("Timeout waiting for Angular load. (" + FrameworkConstants.WAIT_PAGE_LOADED + "s)");
-                Assert.fail("Timeout waiting for Angular load. (" + FrameworkConstants.WAIT_PAGE_LOADED + "s)");
-            }
-        }
-
     }
 
 }

@@ -1,21 +1,17 @@
 package com.assessment.testcases.JuiceBox.pages;
 
-import com.assessment.constants.FrameworkConstants;
 import com.assessment.testcases.JuiceBox.BasePageJB;
 import com.assessment.utils.DataGenerateUtils;
 
 import static com.assessment.keywords.WebUI.*;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 public class BasketPage extends BasePageJB {
 
     
     private By reduceQuantityButton  = By.xpath("(//*[@data-icon='minus-square'])[1]");
-    private By increaseQuantityButton  = By.xpath("(//*[@data-icon='trash-alt'])[1]");
+    private By increaseQuantityButton  = By.xpath("(//*[@data-icon='plus-square'])[1]");
     private By deleteProduct  = By.xpath("(//*[@data-icon='trash-alt'])[1]");
     private By totalPrice  = By.id("price");
     private By checkoutButton  = By.id("checkoutButton");
@@ -57,8 +53,7 @@ public class BasketPage extends BasePageJB {
         setText(nameTextbox, DataGenerateUtils.randomFullName());
        // setText(mobileTextbox, DataGenerateUtils.randomPhoneNumber());
         setText(mobileTextbox, "8888947373");
-        
-        setText(zipTextbox, DataGenerateUtils.randomZipCode());
+        setText(zipTextbox, "123456");
         setText(cityTextbox, DataGenerateUtils.randomCity());
         setText(stateTextbox, DataGenerateUtils.randomState());
         setText(addressTextbox, DataGenerateUtils.randomAddress());
